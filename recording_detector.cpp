@@ -21,11 +21,6 @@ void restartFtp()
     }
 }
 
-void sleepSec(int sec)
-{
-    usleep(sec * 1000 * 1000);
-}
-
 void sleepHour()
 {
     sleepSec(60 * 60);
@@ -71,7 +66,7 @@ void mainLoop()
             {
                 sendMailRecordingFail(no_record_increment);
             }
-	    else 
+            else 
             {
                 currentSize += sum_of_sizes;
             }
@@ -83,9 +78,16 @@ void mainLoop()
         //restartFtp();
     }
 }
+void sig_handler(int signo)
+{
+      if (signo == SIGINT)
+              printf("received SIGINT\n");
+      exit(1);
+}
 
 int main()
 {
+    signal(SIGINT, sig_handler);
     sleepSec(60);
     sendMailRecordingFail(greeting);
     mainLoop();
