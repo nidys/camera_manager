@@ -56,7 +56,8 @@ class RecordingDetectorProcesManager
 
         void rebuild_camman()
         {
-            system(rebuild_camera_manager.c_str());
+            const char* rebuild_camera_manager = "make clean_camman; make camman";
+            system(rebuild_camera_manager);
         }
     private:
         int pid;
