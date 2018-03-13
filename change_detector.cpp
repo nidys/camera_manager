@@ -9,7 +9,7 @@
 #include <sys/types.h>
 #include <signal.h>
 using namespace std;
-
+//some txt
 std::string sh_exec(const char* cmd) {
     std::array<char, 128> buffer;
     std::string result;
