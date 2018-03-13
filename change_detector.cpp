@@ -10,7 +10,8 @@
 #include <signal.h>
 using namespace std;
 //some txt
-std::string sh_exec(const char* cmd) {
+std::string sh_exec(string str) {
+    const char* cmd = str.c_str();
     std::array<char, 128> buffer;
     std::string result;
     std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
@@ -24,9 +25,12 @@ std::string sh_exec(const char* cmd) {
 
 int is_update_required()
 {
-    const char* commit_timestamp = "git log -1 --format=%ct";
-    const char* pull_changes = "git pull origin master";
-
+    string commit_timestamp = "git --git-dir "+prog_path+".git log -1 --format=%ct";
+    string pull_changes = "git --git-dir "+prog_path+".git pull origin master";
+    
+    //cout << "## " << commit_timestamp << endl;
+    //cout << "## " << pull_changes << endl;
+    
     string start_ts = sh_exec(commit_timestamp);
     sh_exec(pull_changes);
     string end_ts = sh_exec(commit_timestamp);
