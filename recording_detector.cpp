@@ -5,20 +5,8 @@
 void restartFtp()
 {
     system(restart_ftp.c_str());
-    int status = system(ss1.c_str());
-    
-        sendMailRecordingFail(no_ftp_restart + "-stop");
-    if (status != 0)
-    {
-        sendMailRecordingFail(no_ftp_restart + "-stop");
-    }
-    status = system(ss2.c_str());
-
-    //printf("returned status = %d\n", status);
-    if (status != 0)
-    {
-        sendMailRecordingFail(no_ftp_restart + "-start");
-    }
+    system(ss1.c_str());
+    system(ss2.c_str());
 }
 
 void sleepHour()
