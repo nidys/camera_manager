@@ -20,10 +20,21 @@ bool currentTimeBetween2and3AM()
     struct tm* now = localtime(&t);
     return (now->tm_hour >= 2 && now->tm_hour < 3);
 }
-
+string TODO_fix_dev_name(string cmd)
+{
+    const string dev = "Maxtor";
+    unsigned long index = cmd.find(dev, 0);
+    if (index != std::string::npos) 
+    {
+        cmd.replace(index, dev.length(), dev + "1");
+    }
+    return cmd;
+}
 void backupRecordings()
 {
-    int status = system(store_all_recordings.c_str());
+    string tmp = TODO_fix_dev_name(store_all_recordings);
+
+    int status = system(tmp.c_str());
     if (status != 0)
     {
         sendMailRecordingFail(backup_error);
@@ -45,11 +56,14 @@ void mainLoop()
         {
             sendMailRecordingFail(no_recordings);
         }
+   
         int currentSize = 0;
+        
         while(currentTimeBetween2and3AM() == false)
         {
             sleepHour();
             int sum_of_sizes = getAllRecordingSizes();
+       
             if (currentSize >= sum_of_sizes)
             {
                 sendMailRecordingFail(no_record_increment);
@@ -79,14 +93,6 @@ int main()
     sleepSec(60);
     sendMailRecordingFail(greeting);
     mainLoop();
-
-
-
-	//restartFtp();
-	//printf("%d dircont\n", dirContainsRecording());
-	//printf("%d\n", currentTimeBetween2and3AM());
-	//sendMailRecordingFail(no_record_increment);
-	//checkStorageUsage();
-	//int val = getAllRecordingSizes();
+    
     return 0;
 }
