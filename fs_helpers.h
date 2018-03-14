@@ -103,7 +103,9 @@ void checkStorageUsage()
 
 int getAllRecordingSizes()
 {
-    system(check_file_sizes.c_str());
+  string tmp = "du -b " + recording_path + " | awk '{print $1}' | tail -1  > " + sizes_result;
+
+    system(tmp.c_str());
     fstream file(sizes_result.c_str());
     string line;
 

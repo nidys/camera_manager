@@ -9,6 +9,10 @@ void restartFtp()
     system(ss2.c_str());
 }
 
+void sleepMinutes(int num)
+{
+    sleepSec(60 * num);
+}
 void sleepHour()
 {
     sleepSec(60 * 60);
@@ -46,10 +50,12 @@ void backupAndRestart()
     backupRecordings();
     restartFtp();
     checkStorageUsage();
+    sleepSec(60);
 }
 void mainLoop()
 {
     //sleepSec(2);
+		int error_counter = 0;
     while(1)
     {
         if (dirContainsRecording() == false)
@@ -61,20 +67,28 @@ void mainLoop()
         
         while(currentTimeBetween2and3AM() == false)
         {
-            sleepHour();
+					  sleepMinutes(5);
+            //sleepHour();
             int sum_of_sizes = getAllRecordingSizes();
        
             if (currentSize >= sum_of_sizes)
             {
-                sendMailRecordingFail(no_record_increment);
+								error_counter++;
+								backupAndRestart();
+								currentSize = 0;	
+								if (error_counter > 12)
+								{
+                	sendMailRecordingFail(no_record_increment);
+									error_counter = 0;
+								}
             }
             else 
             {
-                currentSize += sum_of_sizes;
+                currentSize = sum_of_sizes;
             }
         }
         backupAndRestart();
-        sleepSec(60);
+				error_counter = 0;
         //checkDir(); 
         //listFiles();
         //restartFtp();
