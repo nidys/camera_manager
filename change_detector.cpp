@@ -8,8 +8,10 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <signal.h>
+#include <errno.h>
+#include<cstring>
 using namespace std;
-//some txtaaa
+
 std::string sh_exec(string str) {
     const char* cmd = str.c_str();
     std::array<char, 128> buffer;
@@ -25,11 +27,8 @@ std::string sh_exec(string str) {
 
 int is_update_required()
 {
-    string commit_timestamp = "git --git-dir "+prog_path+".git log -1 --format=%ct";
-    string pull_changes = "git --git-dir "+prog_path+".git pull origin master";
-    
-    //cout << "## " << commit_timestamp << endl;
-    //cout << "## " << pull_changes << endl;
+    string commit_timestamp = "git --git-dir " + prog_path + ".git log -1 --format=%ct";
+    string pull_changes = "git --git-dir " + prog_path + ".git pull origin master";
     
     string start_ts = sh_exec(commit_timestamp);
     sh_exec(pull_changes);
@@ -38,19 +37,37 @@ int is_update_required()
     return (start_ts != end_ts);
 }
 
+void start_camera_manager()
+{
+    char prog_name[90];
+    const char* cm_name = "camman";
+    memset(prog_name, '\0', sizeof(prog_name));
+    strncpy(prog_name, prog_path.c_str(), prog_path.length());
+    strcat(prog_name, cm_name);
+    char* args[] = {prog_name, NULL};
+    
+    int val = execvp(args[0], args);
+    
+    if (val == -1)
+    {
+        cout << "\t" << strerror(errno) << endl;
+        exit(1);
+    }
+}
+
 class RecordingDetectorProcesManager
 {
     public:
         void start_camman()
         {
             pid = fork();
+            
             if (pid == 0)
             {
-                char prog_name[10] = "./camman";
-                char* args[] = {prog_name, NULL};
-                execvp(args[0], args);
+                start_camera_manager();
             }
         }
+
         void stop_camman()
         {
             kill(pid, SIGINT);
